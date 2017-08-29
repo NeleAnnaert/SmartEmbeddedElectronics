@@ -2,8 +2,6 @@
 from mapper import Mapper, Location, GUI
 from motor_control.msg import motor as MotorMsg
 from aruco.msg import Position as Pos
-from laser_detect.msg import Distance as Obj
-from parking_detect.msg import Orientation as Park
 import rospy
 
 
@@ -18,10 +16,6 @@ def cb_pos(data):
 
 def cb_obj(data):
     mapper.update_obj(data.distance)
-
-
-def cb_park(data):
-    mapper.update_park(data.rotation)
 
 
 def send_motor(length, angles, distances):
@@ -94,8 +88,6 @@ if __name__ == "__main__":
     rospy.init_node("mapper_node")
 
     rospy.Subscriber("position", Pos, cb_pos)
-    rospy.Subscriber("object", Obj, cb_obj)
-    rospy.Subscriber("parking", Park, cb_park)
 
     app = GUI(mapper, motor_up=motor_up, motor_down=motor_down, motor_left=motor_left, motor_right=motor_right,
               motor_angle_left=motor_angle_left, motor_angle_right=motor_angle_right)

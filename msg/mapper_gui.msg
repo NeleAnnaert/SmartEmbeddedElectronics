@@ -5,11 +5,5 @@ int32 current_loc_angle
 int32 previous_loc_x
 int32 previous_loc_y
 int32 previous_loc_angle
-int32 parking_loc_x
-int32 parking_loc_y
-int32 parking_loc_angle
-int32 previous_park_x
-int32 previous_park_y
-int32 previous_park_angle
 int32 weight
 bool send_command

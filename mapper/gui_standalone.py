@@ -20,17 +20,14 @@ class GUIStandalone(GUI):
         self.mapper = Mapper(width, height, send_motor)
         super().__init__(self.mapper, **kwargs)
 
-    def update_mapper(self, map_matrix, current_loc, previous_loc, parking_loc, previous_park, weight,
+    def update_mapper(self, map_matrix, current_loc, previous_loc, weight,
                       send_command):
         self.mapper.map_matrix = map_matrix
         self.mapper.current_loc = current_loc
         self.mapper.previous_loc = previous_loc
-        self.mapper.parking_loc = parking_loc
-        self.mapper.previous_park = previous_park
         self.mapper.weight = weight
         self.mapper.send_command = send_command
         self.mapper.path_plan()
-        self.grid_kleur_in()
 
     def update_item(self):
         changes = super().update_item()

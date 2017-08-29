@@ -2,8 +2,6 @@
 from mapper import Mapper, Location
 from motor_control.msg import motor as MotorMsg
 from aruco.msg import Position as Pos
-from laser_detect.msg import Distance as Obj
-from parking_detect.msg import Orientation as Park
 from mapper_node.msg import mapper_gui as MapperMsg
 import rospy
 
@@ -21,15 +19,6 @@ def cb_pos(data):
     location = Location(data.X_coord, data.Y_coord, -data.Robot_Rotation)
     mapper.update_pos(location)
 
-
-def cb_obj(data):
-    mapper.update_obj(data.distance)
-
-
-def cb_park(data):
-    mapper.update_park(data.rotation)
-
-
 def send_motor(length, angles, distances):
     msg = MotorMsg()
     msg.length = length
@@ -42,8 +31,6 @@ def cb_mapper(data):
     mapper.map_matrix = json.loads(data.map_matrix)
     mapper.current_loc = Location(data.current_loc_x, data.current_loc_y, data.current_loc_angle)
     mapper.previous_loc = Location(data.previous_loc_x, data.previous_loc_y, data.previous_loc_angle)
-    mapper.parking_loc = Location(data.parking_loc_x, data.parking_loc_y, data.parking_loc_angle)
-    mapper.previous_park = Location(data.previous_park_x, data.previous_park_y, data.previous_park_angle)
     mapper.weight = data.weight
     mapper.send_command = data.send_command
     mapper.path_plan()
@@ -58,12 +45,6 @@ def send_mapper():
     msg.previous_loc_x = mapper.previous_loc.x
     msg.previous_loc_y = mapper.previous_loc.y
     msg.previous_loc_angle = mapper.previous_loc.angle
-    msg.parking_loc_x = mapper.parking_loc.x
-    msg.parking_loc_y = mapper.parking_loc.y
-    msg.parking_loc_angle = mapper.parking_loc.angle
-    msg.previous_park_x = mapper.previous_park.x
-    msg.previous_park_y = mapper.previous_park.y
-    msg.previous_park_angle = mapper.previous_park.angle
     msg.weight = mapper.weight
     msg.send_command = mapper.send_command
     pub_gui.publish(msg)
@@ -86,8 +67,6 @@ if __name__ == "__main__":
     pub_gui = rospy.Publisher("mapper_gui", MapperMsg, queue_size=10)
 
     rospy.Subscriber("position", Pos, cb_pos)
-    rospy.Subscriber("object", Obj, cb_obj)
-    rospy.Subscriber("parking", Park, cb_park)
     rospy.Subscriber("mapper_gui_host", MapperMsg, cb_mapper)
 
     # spin() simply keeps python from exiting until this node is stopped

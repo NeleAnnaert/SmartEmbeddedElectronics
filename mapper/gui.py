@@ -29,10 +29,6 @@ class GUI(tk.Frame):
             motor_angle_left = GUI.print_command
         if not motor_angle_right:
             motor_angle_right = GUI.print_command
-        if not button_1:
-            button_1 = GUI.print_command
-        if not button_2:
-            button_2 = GUI.print_command
         if not button_3:
             button_3 = GUI.print_command
 
@@ -90,8 +86,8 @@ class GUI(tk.Frame):
         self.input_angle = ttk.Entry(self.label_angle)
 
         self.label_item = ttk.LabelFrame(self.frame_1, text="Location item", width=50)
-        items = ["Current location", "Previous location", "Current parking spot", "Previous parking spot",
-                 "Parking wall", "Wall", "Nothing"]
+        items = ["Current location", "Previous location", 
+                 "Wall", "Nothing"]
         self.input_item_val = tk.StringVar(self.frame_1)
         self.input_item_val.set(items[-1])
         self.input_item = tk.OptionMenu(self.label_item, self.input_item_val, *items)
@@ -135,10 +131,6 @@ class GUI(tk.Frame):
         self.path_button.grid(row=row, column=1)
         row += 1
 
-        self.button_1 = ttk.Button(self.frame_2, text="Color calibration", command=button_1)
-        self.button_1.pack()
-        self.button_2 = ttk.Button(self.frame_2, text="Perspective calibration", command=button_2)
-        self.button_2.pack()
         self.button_3 = ttk.Button(self.frame_2, text="Position calibration", command=button_3)
         self.button_3.pack()
 
@@ -166,34 +158,6 @@ class GUI(tk.Frame):
         self.root.bind('<Left>', motor_left)
         self.root.bind('<Right>', motor_right)
         self.root.bind('<Down>', motor_down)
-
-        self.grid_kleur_in()
-
-    def grid_kleur_in(self):
-        self.weight.set(self.mapper.weight)
-        for row in range(self.mapper.height):
-            for col in range(self.mapper.width):
-                self.set_kleur(row, col)
-        self.root.update()
-
-    def set_kleur(self, row, col):
-        val = self.mapper.map_matrix[row][col]
-        kleur = "white"
-        if self.mapper.current_loc.x == col and self.mapper.current_loc.y == row:
-            kleur = "#f4e842"  # Yellow
-        elif self.mapper.previous_loc.x == col and self.mapper.previous_loc.y == row:
-            kleur = "#bef441"  # light green
-        elif self.mapper.parking_loc.x == col and self.mapper.parking_loc.y == row:
-            kleur = "#0b5405"  # dark green
-        elif self.mapper.previous_park.x == col and self.mapper.previous_park.y == row:
-            kleur = "#3f845f"  # light blue
-        elif val == self.mapper.PARKING_WALL:
-            kleur = "grey"
-        elif val != 0:
-            kleur = "black"
-        elif self.mapper.path_found and ((col, row) in self.mapper.path_found):
-            kleur = "red"
-        self.canvas.itemconfig(self.rect_list[row][col], fill=kleur)
 
     def mouse_over_canvas(self, event):
         x, y, item = self.mouse_event_to_grid(event)
@@ -230,33 +194,12 @@ class GUI(tk.Frame):
                     self.mapper.previous_loc.x = x
                     self.mapper.previous_loc.y = y
                     loc = True
-                elif item_menu == "Current parking spot":
-                    old_x = self.mapper.parking_loc.x
-                    old_y = self.mapper.parking_loc.y
-                    self.mapper.parking_loc.x = x
-                    self.mapper.parking_loc.y = y
-                    loc = True
-                elif item_menu == "Previous parking spot":
-                    old_x = self.mapper.previous_park.x
-                    old_y = self.mapper.previous_park.y
-                    self.mapper.previous_park.x = x
-                    self.mapper.previous_park.y = y
-                    loc = True
-                elif item_menu == "Parking wall":
-                    self.mapper.map_matrix[y][x] = self.mapper.PARKING_WALL
-                    kleur = "grey"
                 elif item_menu == "Wall":
                     current_time = int(time.time())
                     self.mapper.map_matrix[y][x] = current_time
-                    kleur = "black"
                 else:
                     self.mapper.map_matrix[y][x] = 0
 
-                if loc:
-                    self.set_kleur(y, x)
-                    self.set_kleur(old_y, old_x)
-                else:
-                    self.canvas.itemconfig(self.rect_list[y][x], fill=kleur)
         else:
             self.close_mouse_over(None)
 
@@ -301,25 +244,6 @@ class GUI(tk.Frame):
                                 self.mapper.previous_loc.y = y
                                 self.mapper.previous_loc.angle = angle
                                 self.mapper.changes_loc = True
-                            elif item == "Current parking spot":
-                                self.mapper.previous_park.x = self.mapper.parking_loc.x
-                                self.mapper.previous_park.y = self.mapper.parking_loc.y
-                                self.mapper.previous_park.angle = self.mapper.parking_loc.angle
-
-                                self.mapper.parking_loc.x = x
-                                self.mapper.parking_loc.y = y
-                                self.mapper.parking_loc.angle = angle
-                                self.mapper.del_park()
-                                self.mapper.add_park()
-                                self.mapper.changes_parking = True
-                            elif item == "Previous parking spot":
-                                self.mapper.previous_park.x = x
-                                self.mapper.previous_park.y = y
-                                self.mapper.previous_park.angle = angle
-                                self.mapper.changes_parking = True
-                            elif item == "Parking wall":
-                                self.mapper.place_wall(y, x)
-                                self.mapper.changes_obj = True
                             elif item == "Wall":
                                 current_time = int(time.time())
                                 self.mapper.place_map(y, x, current_time)

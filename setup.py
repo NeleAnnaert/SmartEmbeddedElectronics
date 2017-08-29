@@ -1,5 +1,4 @@
-
-m distutils.core import setup
+from distutils.core import setup
 
 
 def readme():
@@ -12,7 +11,7 @@ setup(
     packages=['mapper'],
     url='',
     license='MIT License',
-    author='Gill Bouwen and Stijn Goethals',
+    author='Gill Bouwen and Stijn Goethals adjustments by Nele Annaert',
     author_email='',
     description='Mapper for ROS project',
     long_description=readme(),
