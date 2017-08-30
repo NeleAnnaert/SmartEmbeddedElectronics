@@ -64,17 +64,19 @@ namespace aruco_detect
   }
 
   /// Public Search Method
-  bool Detector::detectAruco(Mat img)
+  std::vector<bool> Detector::detectAruco(Mat img)
   {
 	vector< Result >  Results; // Vector for calculated X, Y and rotation according to markers
 	vector< Marker >  Markers; // Vector for found markers  
+        vector <bool> solution; //Vector for bools
 	  
     //printf("PROCESSING IMAGE...\n\n");
 	MDet.detect(img, Markers, CamParam, MarkerSize); // Actual detection
 	
 	if(Markers.size() == 0) // Test e.g. wrong dictionary
 	{
-		return false;
+		solution.push°back(false);
+		return solution;		
 	}
 	
 	#ifdef DEBUG

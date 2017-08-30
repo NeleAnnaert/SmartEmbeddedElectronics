@@ -38,11 +38,12 @@ namespace aruco_detect
 	float out_X; // Horizontal position of the robot
 	float out_Y; // Vertical position of the robot
 	float out_Rotation; // Rotation of the robot, relative to the axes
+        int valuePoint;
 		
 	/// Public Methods
 	Detector(String xml);
 	~Detector();
-	bool detectAruco(cv::Mat img);
+	std::vector<bool> detectAruco(cv::Mat img);
 	
 	
     private:
